@@ -26,10 +26,19 @@ public class NPC : MonoBehaviour {
         navMeshAgent = GetComponent<NavMeshAgent>();
         Debug.Log("manager = " + WaypointsManager.GetWaypointsManager());
 
+        humanScript = GetComponent<NPCHuman>();
+        zombieScript = GetComponent<NPCZombie>();
+
         if (isZombie)
         {
             humanScript.enabled = false;
             zombieScript.enabled = true;
+        }
+
+        else
+        {
+            humanScript.enabled = true;
+            zombieScript.enabled = false;
         }
     }
 
@@ -40,6 +49,7 @@ public class NPC : MonoBehaviour {
         ReachedWaypoint,
         FollowingPlayer,
         Attacking,
+        Panicking,
         Dead
     }
 
@@ -52,33 +62,59 @@ public class NPC : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if(state == State.Idle)
+        if (!isZombie)
         {
-            currentIdleTimer += Time.deltaTime;
-            var elapsedIdleSecs = currentIdleTimer % 60;
-            //DebugLogger.Log("Idle current time = "+elapsedIdleSecs+"s", Enum.LoggerMessageType.Important);
-            //DebugLogger.Log("I will move at " + nextIdleEndTime + "s", Enum.LoggerMessageType.Important);
-            //choose a new destination when reaching the nextIdleEndTime
-            if (elapsedIdleSecs >= nextIdleEndTime && canChooseWaypoint)
+            if (!humanScript.isPanicked)
             {
-                canChooseWaypoint = false;
-                ChooseNextWaypoint();
-            }
-        }
+                if (state == State.Idle)
+                {
+                    currentIdleTimer += Time.deltaTime;
+                    var elapsedIdleSecs = currentIdleTimer % 60;
+                    //DebugLogger.Log("Idle current time = "+elapsedIdleSecs+"s", Enum.LoggerMessageType.Important);
+                    //DebugLogger.Log("I will move at " + nextIdleEndTime + "s", Enum.LoggerMessageType.Important);
+                    //choose a new destination when reaching the nextIdleEndTime
+                    if (elapsedIdleSecs >= nextIdleEndTime && canChooseWaypoint)
+                    {
+                        canChooseWaypoint = false;
+                        ChooseNextWaypoint();
+                    }
+                }
 
-        else if (state == State.GoingToWayPoint)
-        {
-            //Debug.Log("remaining distance : " + Vector3.Distance(transform.position, targetWaypoint));
-            //If waypoint reached, trigger idle state
-            if(Vector3.Distance(transform.position, targetWaypoint) <= distanceMargin)
-            {
-                StartIdle();
+                else if (state == State.GoingToWayPoint)
+                {
+                    //Debug.Log("remaining distance : " + Vector3.Distance(transform.position, targetWaypoint));
+                    //If waypoint reached, trigger idle state
+                    if (Vector3.Distance(transform.position, navMeshAgent.destination) <= distanceMargin)
+                    {
+                        StartIdle();
+                    }
+
+                    //Else continue moving
+                    else
+                    {
+
+                    }
+                }
+
+                //If the state is packing here, that's because the humanScript had the isPanicked = true but now it's over and the human is going to a waypoint
+                else if(state == State.Panicking)
+                {
+                    DebugLogger.Log("Panicked is finished, going to waypoint", Enum.LoggerMessageType.Important);
+                    state = State.GoingToWayPoint;
+                }
             }
 
-            //Else continue moving
             else
             {
+                if(state != State.Panicking)
+                {
+                    state = State.Panicking;
+                }
                 
+                if (currentIdleTimer > 0f)
+                {
+                    currentIdleTimer = 0f;
+                }
             }
         }
     }
