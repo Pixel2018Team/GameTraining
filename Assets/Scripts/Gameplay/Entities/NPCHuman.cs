@@ -10,9 +10,8 @@ public class NPCHuman : MonoBehaviour
     public bool isPanicked;
     public bool searchForSafeDestinationEnabled;
     public bool outOfRangeFromEvilGuy;
-    public float panicMaxTime;
     public float panicDetectionDistance;
-    public float initialFleeTime;
+    public float fleeTime;
     public float fleeSpeed;
     public float fleeMinDistance;
     public float fleeMaxDistance;
@@ -20,6 +19,8 @@ public class NPCHuman : MonoBehaviour
     protected NavMeshAgent navMeshAgent;
     private float baseSpeed;
     private float currentFleeTimer;
+    public GameObject playerToFollow;
+    public bool isSaved;
 
     // Use this for initialization
     void Awake()
@@ -34,7 +35,6 @@ public class NPCHuman : MonoBehaviour
     {
         CheckDistanceToEvilGuyAndPanicMode();
 
-
         if (isPanicked)
         {
             Debug.DrawLine(transform.position, evilGuy.transform.position, Color.red, 0.1f);
@@ -48,7 +48,7 @@ public class NPCHuman : MonoBehaviour
                 var elapsedFleeSecs = currentFleeTimer % 60;
 
                 //When the initial flee time has been reached, choose a random point opposite to the evil guy direction to flee to
-                if (elapsedFleeSecs >= initialFleeTime)
+                if (elapsedFleeSecs >= fleeTime)
                 {
                     DebugLogger.Log("think timer OK", Enum.LoggerMessageType.Important);
                     if (!searchForSafeDestinationEnabled)
@@ -67,14 +67,28 @@ public class NPCHuman : MonoBehaviour
 
     }
 
+    public void OnTriggerEnter(Collider collision)
+    {
+        //tmp
+        if(collision.gameObject.tag == "player_friendly" && !isPanicked)
+        {
+            playerToFollow = collision.gameObject;
+            //Debug.Log("Following player");
+        }
+
+        //Todo : collision with a safe zone => playerToFollow = null, set destination safe zone, isSaved = true
+    }
+
+    public void LeavePlayer()
+    {
+        playerToFollow = null;
+    }
+
     public void CheckDistanceToEvilGuyAndPanicMode()
     {
         //Debug.Log("distance to bad guy = " + Vector3.Distance(evilGuy.transform.position, transform.position));
         if (Vector3.Distance(evilGuy.transform.position, transform.position) <= panicDetectionDistance)
         {
-            outOfRangeFromEvilGuy = false;
-            currentFleeTimer = 0f;
-            searchForSafeDestinationEnabled = false;
             TriggerPanicMode();
         }
 
@@ -130,7 +144,13 @@ public class NPCHuman : MonoBehaviour
     public void TriggerPanicMode()
     {
         isPanicked = true;
-
+        outOfRangeFromEvilGuy = false;
+        currentFleeTimer = 0f;
+        searchForSafeDestinationEnabled = false;
+        if(playerToFollow != null)
+        {
+            playerToFollow = null;
+        }
         //Flee vector = opposite direction of the evil guy's
         Vector3 fleeDirection = (transform.position - evilGuy.transform.position).normalized;
 

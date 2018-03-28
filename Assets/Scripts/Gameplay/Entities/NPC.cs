@@ -64,6 +64,18 @@ public class NPC : MonoBehaviour {
 
         if (!isZombie)
         {
+            //Behaviour when following a player
+            if(humanScript.playerToFollow != null)
+            {
+                if(state != State.FollowingPlayer)
+                {
+                    state = State.FollowingPlayer;
+                }
+                transform.position = Vector3.Slerp(transform.position, humanScript.playerToFollow.transform.position - (humanScript.playerToFollow.transform.forward * 5), Time.deltaTime * 2);
+                navMeshAgent.SetDestination(humanScript.playerToFollow.transform.position - (humanScript.playerToFollow.transform.forward * 5)); //stick behind the player
+            }
+
+            //Behaviour when not following a player
             if (!humanScript.isPanicked)
             {
                 if (state == State.Idle)
