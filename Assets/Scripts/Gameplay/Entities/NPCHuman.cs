@@ -21,6 +21,7 @@ public class NPCHuman : MonoBehaviour
     private float currentFleeTimer;
     public GameObject playerToFollow;
     public bool isSaved;
+    private const string PLAYER_TAG = "player";
 
     // Use this for initialization
     void Awake()
@@ -70,7 +71,7 @@ public class NPCHuman : MonoBehaviour
     public void OnTriggerEnter(Collider collision)
     {
         //tmp
-        if(collision.gameObject.tag == "player_friendly" && !isPanicked)
+        if(collision.gameObject.tag == PLAYER_TAG && !isPanicked)
         {
             playerToFollow = collision.gameObject;
             //Debug.Log("Following player");
