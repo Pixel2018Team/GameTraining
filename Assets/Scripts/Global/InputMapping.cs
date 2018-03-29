@@ -12,7 +12,10 @@
             RB,
             LT,
             RT,
-            X
+            X,
+            Y,
+            A,
+            B
         }
 
         public enum PlayerTag

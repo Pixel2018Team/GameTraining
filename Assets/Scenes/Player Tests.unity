@@ -311,6 +311,24 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5840f469554023844a1d24790c287645, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &964065317 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1231300729853592, guid: 5840f469554023844a1d24790c287645,
+    type: 2}
+  m_PrefabInternal: {fileID: 1438151132}
+--- !u!114 &964065325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 964065317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81d189070f08ba84ba4ce3fd16da7a52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trapCount: 3
+  playerTag: 0
 --- !u!1 &1392403554
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,7 +411,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4760628418029640, guid: 5840f469554023844a1d24790c287645, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -4.85
       objectReference: {fileID: 0}
     - target: {fileID: 4760628418029640, guid: 5840f469554023844a1d24790c287645, type: 2}
       propertyPath: m_LocalRotation.x
