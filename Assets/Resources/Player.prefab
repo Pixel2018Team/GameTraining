@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114681691611578518}
   - component: {fileID: 114538444283688266}
   - component: {fileID: 54191888153868078}
+  - component: {fileID: 114947695497532528}
   - component: {fileID: 114355200844684536}
   m_Layer: 0
   m_Name: Player
@@ -215,6 +216,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 6
   playerTag: 0
+--- !u!114 &114947695497532528
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1231300729853592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be5141feb79fbae47ab7fe1db4f70cad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxLife: 10
+  currentLife: 0
 --- !u!136 &136146948724422492
 CapsuleCollider:
   m_ObjectHideFlags: 1

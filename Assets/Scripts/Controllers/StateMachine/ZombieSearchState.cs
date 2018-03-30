@@ -4,7 +4,10 @@ namespace Assets.Scripts.Controllers.StateMachine
 {
     class ZombieSearchState : ZombieState
     {
-        private const string PLAYER_TAG = "player";
+        public override void OnTriggerStay(GameObject gameObject, Collider other)
+        {
+            // Not attacking while searching
+        }
 
         public override void Update(GameObject gameObject)
         {
@@ -14,7 +17,11 @@ namespace Assets.Scripts.Controllers.StateMachine
             {
                 controller.target = target;
                 var stateMachine = gameObject.GetComponent<ZombieStateMachine>();
-                stateMachine.currentState = ZombieStateMachine.running;
+                stateMachine.currentState = ZombieStateMachine.Running;
+            }
+            else
+            {
+                // Add wondering here
             }
         }
 

@@ -4,9 +4,9 @@ namespace Assets.Scripts.Controllers.StateMachine
 {
     class ZombieStateMachine : MonoBehaviour
     {
-        public static ZombieSearchState zombieSearchState = new ZombieSearchState();
-        public static ZombieRunningState running = new ZombieRunningState();
+        public static ZombieSearchState Searching = new ZombieSearchState();
+        public static ZombieRunningState Running = new ZombieRunningState();
 
-        public ZombieState currentState = zombieSearchState;
+        public ZombieState currentState = Searching;
     }
 }
