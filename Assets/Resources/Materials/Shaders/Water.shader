@@ -3,19 +3,19 @@
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Base Texture", 2D) = "white" {}
 		_NoiseTex ("Noise Texture", 2D) = "white" {}
+		_Transparency("Transparency", Range(0.0,1.0)) = 0.25
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
 		_BaseSpeed("Base speed", Range(0,0.5)) = 0.1
 		_NoiseScale("Noise scale", Range(0,1)) = 0.1
 	}
 	SubShader {
-		Tags { "RenderType"="Opaque" }
+		Tags { "Queue"="Transparent" "RenderType"="Transparent" "ForceNoShadowCasting" = "True" }
 		LOD 200
 
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Standard fullforwardshadows
-
+		#pragma surface surf Standard alpha
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
 
@@ -23,6 +23,7 @@
 		sampler2D _NoiseTex;
 		float _BaseSpeed;
 		float _NoiseScale;
+		float _Transparency;
 
 		struct Input {
 			float2 uv_MainTex;
@@ -49,15 +50,15 @@
 			float2 uvNoisyTimeShift = IN.uv_NoiseTex + _NoiseScale * float2( noise.r, noise.g ); //quantité de noise de la texture
 			float4 baseColor = tex2D( _MainTex, uvNoisyTimeShift)* _Color;
 
-			baseColor.a = 1;
+			baseColor.a = _Transparency;
 
 			// Albedo comes from a texture tinted by color
-			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
 			o.Albedo = baseColor.rgb;
+			o.Alpha = baseColor.a;
 			// Metallic and smoothness come from slider variables
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
-			o.Alpha = baseColor.a;
+
 		}
 		ENDCG
 	}
