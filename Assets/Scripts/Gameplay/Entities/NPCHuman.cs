@@ -21,7 +21,6 @@ public class NPCHuman : MonoBehaviour
     private float currentFleeTimer;
     public GameObject playerToFollow;
     public bool isSaved;
-    private const string PLAYER_TAG = "player";
 
     // Use this for initialization
     void Awake()
@@ -34,55 +33,70 @@ public class NPCHuman : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CheckDistanceToEvilGuyAndPanicMode();
-
-        if (isPanicked)
+        if (!isSaved)
         {
-            Debug.DrawLine(transform.position, evilGuy.transform.position, Color.red, 0.1f);
+            CheckDistanceToEvilGuyAndPanicMode();
 
-            //if panicked but far enough from evil guy, check if it's time to choose a destination
-            if (outOfRangeFromEvilGuy)
+            if (isPanicked)
             {
-                DebugLogger.Log("out of range from evil guy, think timer has begin", Enum.LoggerMessageType.Important);
-                currentFleeTimer += Time.deltaTime;
+                Debug.DrawLine(transform.position, evilGuy.transform.position, Color.red, 0.1f);
 
-                var elapsedFleeSecs = currentFleeTimer % 60;
-
-                //When the initial flee time has been reached, choose a random point opposite to the evil guy direction to flee to
-                if (elapsedFleeSecs >= fleeTime)
+                //if panicked but far enough from evil guy, check if it's time to choose a destination
+                if (outOfRangeFromEvilGuy)
                 {
-                    DebugLogger.Log("think timer OK", Enum.LoggerMessageType.Important);
-                    if (!searchForSafeDestinationEnabled)
+                    DebugLogger.Log("out of range from evil guy, think timer has begin", Enum.LoggerMessageType.Important);
+                    currentFleeTimer += Time.deltaTime;
+
+                    var elapsedFleeSecs = currentFleeTimer % 60;
+
+                    //When the initial flee time has been reached, choose a random point opposite to the evil guy direction to flee to
+                    if (elapsedFleeSecs >= fleeTime)
                     {
-                        DebugLogger.Log("Looking for new destination", Enum.LoggerMessageType.Important);
-                        SearchForSafeDestination();
+                        DebugLogger.Log("think timer OK", Enum.LoggerMessageType.Important);
+                        if (!searchForSafeDestinationEnabled)
+                        {
+                            DebugLogger.Log("Looking for new destination", Enum.LoggerMessageType.Important);
+                            SearchForSafeDestination();
+                        }
                     }
                 }
             }
-        }
 
+            else
+            {
+                Debug.DrawLine(transform.position, evilGuy.transform.position, Color.green, 0.1f);
+            }
+        }
         else
         {
-            Debug.DrawLine(transform.position, evilGuy.transform.position, Color.green, 0.1f);
+            transform.position = Vector3.Slerp(transform.position, navMeshAgent.destination, Time.deltaTime);
         }
-
     }
 
     public void OnTriggerEnter(Collider collision)
     {
         //tmp
-        if(collision.gameObject.tag == PLAYER_TAG && !isPanicked)
+        if(collision.gameObject.tag == TagsRef.PLAYER_TAG && !isPanicked && !isSaved)
         {
             playerToFollow = collision.gameObject;
-            //Debug.Log("Following player");
+            var playerController = playerToFollow.GetComponent<PlayerController>();
+            if (!playerController.followingAis.Any(ai => ai == gameObject))
+            {
+                playerToFollow.GetComponent<PlayerController>().followingAis.Add(gameObject);
+            }
         }
-
-        //Todo : collision with a safe zone => playerToFollow = null, set destination safe zone, isSaved = true
     }
 
     public void LeavePlayer()
     {
         playerToFollow = null;
+    }
+
+    public void SaveHuman(GameObject safeZone)
+    {
+        LeavePlayer();
+        isSaved = true;
+        navMeshAgent.SetDestination(safeZone.transform.position);
     }
 
     public void CheckDistanceToEvilGuyAndPanicMode()

@@ -50,6 +50,7 @@ public class NPC : MonoBehaviour {
         FollowingPlayer,
         Attacking,
         Panicking,
+        Saved,
         Dead
     }
 
@@ -75,8 +76,10 @@ public class NPC : MonoBehaviour {
                 navMeshAgent.SetDestination(humanScript.playerToFollow.transform.position - (humanScript.playerToFollow.transform.forward * 5)); //stick behind the player
             }
 
-            //Behaviour when not following a player
-            if (!humanScript.isPanicked)
+
+
+            //Behaviour when not following a player and not saved yet
+            if (!humanScript.isPanicked && !humanScript.isSaved)
             {
                 if (state == State.Idle)
                 {
@@ -108,7 +111,7 @@ public class NPC : MonoBehaviour {
                     }
                 }
 
-                //If the state is packing here, that's because the humanScript had the isPanicked = true but now it's over and the human is going to a waypoint
+                //If the state is panicking here, that's because the humanScript had the isPanicked = true but now it's over and the human is going to a waypoint
                 else if(state == State.Panicking)
                 {
                     DebugLogger.Log("Panicked is finished, going to waypoint", Enum.LoggerMessageType.Important);
@@ -116,7 +119,7 @@ public class NPC : MonoBehaviour {
                 }
             }
 
-            else
+            else if(humanScript.isPanicked)
             {
                 if(state != State.Panicking)
                 {
@@ -126,6 +129,14 @@ public class NPC : MonoBehaviour {
                 if (currentIdleTimer > 0f)
                 {
                     currentIdleTimer = 0f;
+                }
+            }
+
+            else if (humanScript.isSaved)
+            {
+                if (state != State.Saved)
+                {
+                    state = State.Saved;
                 }
             }
         }
