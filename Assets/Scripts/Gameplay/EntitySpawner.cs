@@ -70,53 +70,9 @@ public class EntitySpawner : MonoBehaviour
 
                 AdjustEntityPosition(sp, 50, spawnPoints.Concat(safeZones), true);
                 spawnPoints.Add(sp);
+                ShiftYOnPlane(sp);
             }
         }
-    }
-
-    //Adjust the position of an element according to a minimal distance, away from other objects of a list (or two lists)
-    public void AdjustEntityPosition(GameObject obj, float minimalDistance, IEnumerable<GameObject> objList, bool awayFromCenter)
-    {
-        var maxIterations = 150;
-        var positionAdjusted = false;
-
-        for (int i = 0; i < maxIterations; i++)
-        {
-            var x = Random.Range(leftBound + 1, rightBound);
-            var z = Random.Range(botBound + 1, topBound);
-
-            Vector3 randPosition = new Vector3(x, planeReference.transform.position.y, z);
-
-            if (!objList.Any(o => Vector3.Distance(o.transform.position, randPosition) < minimalDistance))
-            {
-                if (awayFromCenter)
-                {
-                    if (Vector3.Distance(planeReference.transform.position, randPosition) < minimalDistance)
-                    {
-                        positionAdjusted = true;
-                        Debug.Log("Found a suitable position away  from center");
-                    }
-                }
-                else
-                {
-                    positionAdjusted = true;
-                    Debug.Log("Found a suitable position");
-                }
-            }
-
-            else
-            {
-                Debug.Log("Havent found a position for " + obj.name + " at iteration " + i);
-            }
-
-            if (positionAdjusted)
-            {
-                obj.transform.position = randPosition;
-                Debug.Log(" position found for " + obj.name + " at iteration " + i);
-                return;
-            }
-        }
-
     }
 
     public void CreateSafeZones()
@@ -204,6 +160,33 @@ public class EntitySpawner : MonoBehaviour
         }
     }
 
+    public void CreateNPCs()
+    {
+        if (humanAiPrefab != null)
+        {
+            for (int i = 0; i < numberOfHumanBots; i++)
+            {
+                var npc = Instantiate(humanAiPrefab, Vector3.zero, Quaternion.identity);
+
+                var randomSpawnIndex = Random.Range(0, spawnPoints.Count());
+
+                var sp = spawnPoints[randomSpawnIndex];
+                var spPosition = sp.transform.position;
+
+                var xOffset = Random.Range(-5, 5);
+                var zOffset = Random.Range(-5, 5);
+
+                var spDirectionX = xOffset > 0 ? sp.transform.localScale.x / 2 : -sp.transform.localScale.x / 2;
+                var spDirectionZ = zOffset > 0 ? sp.transform.localScale.z / 2 : -sp.transform.localScale.z / 2;
+
+                npc.transform.position = new Vector3(spPosition.x + spDirectionX, planeReference.transform.position.y, spPosition.z + spDirectionZ);
+
+                humanBots.Add(npc);
+                ShiftYOnPlane(npc);
+            }
+        }
+    }
+
     public void CreateWaypointsList()
     {
         if (planeReference != null)
@@ -228,8 +211,55 @@ public class EntitySpawner : MonoBehaviour
                 wp.transform.parent = wpList.transform;
 
                 waypoints.Add(wp);
+                ShiftYOnPlane(wp);
             }
         }
+    }
+
+
+    //Adjust the position of an element according to a minimal distance, away from other objects of a list (or two lists)
+    public void AdjustEntityPosition(GameObject obj, float minimalDistance, IEnumerable<GameObject> objList, bool awayFromCenter)
+    {
+        var maxIterations = 150;
+        var positionAdjusted = false;
+
+        for (int i = 0; i < maxIterations; i++)
+        {
+            var x = Random.Range(leftBound + 1, rightBound);
+            var z = Random.Range(botBound + 1, topBound);
+
+            Vector3 randPosition = new Vector3(x, planeReference.transform.position.y, z);
+
+            if (!objList.Any(o => Vector3.Distance(o.transform.position, randPosition) < minimalDistance))
+            {
+                if (awayFromCenter)
+                {
+                    if (Vector3.Distance(planeReference.transform.position, randPosition) < minimalDistance)
+                    {
+                        positionAdjusted = true;
+                        Debug.Log("Found a suitable position away  from center");
+                    }
+                }
+                else
+                {
+                    positionAdjusted = true;
+                    Debug.Log("Found a suitable position");
+                }
+            }
+
+            else
+            {
+                Debug.Log("Havent found a position for " + obj.name + " at iteration " + i);
+            }
+
+            if (positionAdjusted)
+            {
+                obj.transform.position = randPosition;
+                Debug.Log(" position found for " + obj.name + " at iteration " + i);
+                return;
+            }
+        }
+
     }
 
     //Shift an entity's position on Y so its bottom is placed on the plane's Y
@@ -241,7 +271,7 @@ public class EntitySpawner : MonoBehaviour
     }
 
     //Get the current entity manager
-    public EntitySpawner GetInstance()
+    public static EntitySpawner GetInstance()
     {
         return _instance;
     }

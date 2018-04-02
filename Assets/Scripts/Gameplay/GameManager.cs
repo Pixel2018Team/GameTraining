@@ -97,6 +97,7 @@ public class GameManager : MonoBehaviour
         entitySpawner.CreatePlayers(NB_HUMAN_TEAM_1);
         entitySpawner.CreateSafeZones();
         entitySpawner.CreateSpawnPoints();
+        entitySpawner.CreateNPCs();
 
         gameInitialized = true;
     }

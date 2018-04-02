@@ -56,7 +56,8 @@ public class NPC : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        wayPoints = WaypointsManager.GetWaypointsManager().waypoints;
+        //wayPoints = WaypointsManager.GetWaypointsManager().waypoints;
+        wayPoints = EntitySpawner.GetInstance().waypoints;
         StartIdle();
     }
 	

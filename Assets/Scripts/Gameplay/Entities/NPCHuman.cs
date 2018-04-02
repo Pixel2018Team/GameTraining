@@ -64,7 +64,10 @@ public class NPCHuman : MonoBehaviour
 
             else
             {
-                Debug.DrawLine(transform.position, evilGuy.transform.position, Color.green, 0.1f);
+                if(evilGuy != null)
+                {
+                    Debug.DrawLine(transform.position, evilGuy.transform.position, Color.green, 0.1f);
+                }
             }
         }
         else
@@ -76,7 +79,7 @@ public class NPCHuman : MonoBehaviour
     public void OnTriggerEnter(Collider collision)
     {
         //tmp
-        if(collision.gameObject.tag == TagsRef.PLAYER_TAG && !isPanicked && !isSaved)
+        if(collision.gameObject.tag == TagsRef.PLAYER_TAG && !isPanicked && !isSaved && playerToFollow == null)
         {
             playerToFollow = collision.gameObject;
             var playerController = playerToFollow.GetComponent<PlayerController>();
@@ -101,17 +104,20 @@ public class NPCHuman : MonoBehaviour
 
     public void CheckDistanceToEvilGuyAndPanicMode()
     {
-        //Debug.Log("distance to bad guy = " + Vector3.Distance(evilGuy.transform.position, transform.position));
-        if (Vector3.Distance(evilGuy.transform.position, transform.position) <= panicDetectionDistance)
+        if(evilGuy != null)
         {
-            TriggerPanicMode();
-        }
-
-        else
-        {
-            if (!outOfRangeFromEvilGuy)
+            //Debug.Log("distance to bad guy = " + Vector3.Distance(evilGuy.transform.position, transform.position));
+            if (Vector3.Distance(evilGuy.transform.position, transform.position) <= panicDetectionDistance)
             {
-                outOfRangeFromEvilGuy = true;
+                TriggerPanicMode();
+            }
+
+            else
+            {
+                if (!outOfRangeFromEvilGuy)
+                {
+                    outOfRangeFromEvilGuy = true;
+                }
             }
         }
     }
@@ -127,7 +133,8 @@ public class NPCHuman : MonoBehaviour
 
         //Check if there are waypoints somewhere in the opposite direction
 
-        var wayPoints = WaypointsManager.GetWaypointsManager().waypoints;
+        //var wayPoints = WaypointsManager.GetWaypointsManager().waypoints;
+        var wayPoints = EntitySpawner.GetInstance().waypoints;
 
         var candidateWaypoints = wayPoints.Where(wp => Vector3.Dot(transform.forward, (wp.transform.position - transform.position)) >= 0).ToList();
 

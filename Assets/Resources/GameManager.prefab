@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4195774149202360}
   - component: {fileID: 114793245433183674}
   - component: {fileID: 114069512906320448}
+  - component: {fileID: 114380155208276974}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -57,6 +58,42 @@ MonoBehaviour:
   timerLocked: 0
   countDownMinutes: 0
   countDownSeconds: 0
+--- !u!114 &114380155208276974
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1167958862330018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e08fadec9673c7e49ae6df4f7ec50cf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  planeReference: {fileID: 0}
+  playerPrefab: {fileID: 1231300729853592, guid: 5840f469554023844a1d24790c287645,
+    type: 2}
+  humanAiPrefab: {fileID: 1630491151918274, guid: ee59c09d12b59b2478a151ad748d7b63,
+    type: 2}
+  robotPrefab: {fileID: 0}
+  safeZonePrefab: {fileID: 1143124926932906, guid: f5efe97b6e3bf514ca92d00341126653,
+    type: 2}
+  spawnPointPrefab: {fileID: 1993904437906804, guid: b08cd5de5d4affd46b40e83197477a1b,
+    type: 2}
+  waypointPrefab: {fileID: 1667043113799144, guid: 63b0d3a7e8d7eab46a92ffde5d0f2856,
+    type: 2}
+  numberOfHumanBots: 15
+  numberOfSafeZones: 3
+  numberOfSpawnPoints: 3
+  minDistanceBetweenFixedEntities: 50
+  numberOfWaypoints: 15
+  players: []
+  robot: {fileID: 0}
+  spawnPoints: []
+  safeZones: []
+  humanBots: []
+  zombieBots: []
+  waypoints: []
+  playersSpawnPosition: 0
 --- !u!114 &114793245433183674
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -68,11 +105,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5639b56bdc4433e4198add2b8cd3d3c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 1231300729853592, guid: 5840f469554023844a1d24790c287645,
-    type: 2}
-  humanAiPrefab: {fileID: 1630491151918274, guid: ee59c09d12b59b2478a151ad748d7b63,
-    type: 2}
-  robotPrefab: {fileID: 0}
   preloadingSceneName: PreloadingScene
   firstSceneName: Menu
   mainSceneName: Main

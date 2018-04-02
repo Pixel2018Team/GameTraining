@@ -88,7 +88,7 @@ public class MainMenuInteraction : MonoBehaviour
                 }
             }
 
-            if (Input.GetButtonDown("P2"+ ButtonName_Start))
+            if (Input.GetButtonDown("P2"+ ButtonName_Start) || Input.GetButtonDown("Submit"))
             {
                 p2Ready = !p2Ready;
 
