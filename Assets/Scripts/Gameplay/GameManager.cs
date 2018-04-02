@@ -7,13 +7,17 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject playerPrefab;
     public string preloadingSceneName;
-    public string firstSceneName;
-    private List<Player> players;
+    public string firstSceneName = "Menu";
+    public string mainSceneName = "Main";
+    private List<GameObject> players;
     private static GameManager _instance;
+    private EntitySpawner entitySpawner;
     private GameState gameState;
     private TimerManager timerManager;
+    private bool gameInitialized = false;
+    private const int NB_HUMAN_TEAM_1= 3;
+    private const int NB_HUMAN_TEAM_2 = 1;
 
     private enum GameState
     {
@@ -35,7 +39,9 @@ public class GameManager : MonoBehaviour
             _instance = this;
         }
 
-        players = new List<Player>();
+        entitySpawner = GetComponent<EntitySpawner>();
+
+        players = new List<GameObject>();
 
         timerManager = GetComponent<TimerManager>();
         if(timerManager != null)
@@ -43,6 +49,8 @@ public class GameManager : MonoBehaviour
             timerManager.timerLocked = true;
             DebugLogger.Log("TimerManager initialized for GameManager", Enum.LoggerMessageType.Important);
         }
+
+ 
 
         DontDestroyOnLoad(gameObject);
         DebugLogger.Log("GameManager awake done", Enum.LoggerMessageType.Important);
@@ -62,7 +70,7 @@ public class GameManager : MonoBehaviour
     //Start method specific to the preloading scene
     private void StartPreload()
     {
-        //Preload stuff then go to the menu/main scene
+        //Preload stuff then go to the menu/first scene
         DebugLogger.Log("GameManager start preloading ", Enum.LoggerMessageType.Important);
 
         gameState = GameState.NotStarted;
@@ -72,18 +80,27 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-    }
-
-    public void CreatePlayers()
-    {
-        //Instantiate the player prefab and add players to the list
-        if(playerPrefab != null)
+        //Check if we haven't initialized the game and if we are in the main scene
+        if (!gameInitialized)
         {
-
+            if(SceneManager.GetActiveScene().name == mainSceneName)
+            {
+                InitializeGame();
+            } 
         }
-
     }
+
+    public void InitializeGame()
+    {
+        entitySpawner.SetPlaneReference(GameObject.FindGameObjectWithTag(TagsRef.PLANEREF_TAG));
+        entitySpawner.CreateWaypointsList();
+        entitySpawner.CreatePlayers(NB_HUMAN_TEAM_1);
+        entitySpawner.CreateSafeZones();
+        entitySpawner.CreateSpawnPoints();
+
+        gameInitialized = true;
+    }
+
 
     public void PauseGame()
     {
@@ -91,7 +108,7 @@ public class GameManager : MonoBehaviour
         gameState = GameState.Paused;
         foreach (var p in players)
         {
-            p.canPlay = false;
+            p.GetComponent<Player>().canPlay = false;
         }
 
         //Some code to display a GUI item or something
@@ -102,7 +119,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
         foreach (var p in players)
         {
-            p.canPlay = true;
+            p.GetComponent<Player>().canPlay = true;
         }
 
         //Some code to hide the GUI thingies that were displayed
@@ -117,7 +134,7 @@ public class GameManager : MonoBehaviour
     /*============================= Utility functions ============================= */
 
     //Pick a random player in the list
-    public Player PickRandomPlayer()
+    public GameObject PickRandomPlayer()
     {
         if (players.Count() > 0)
         {
@@ -131,22 +148,22 @@ public class GameManager : MonoBehaviour
     //Check if all players are dead / defeated
     public bool AllPlayersAreDefeated()
     {
-        return players.All(p => p.IsDead);
+        return players.All(p => p.GetComponent<Player>().IsDead);
     }
 
     //Get the player(s) with the hight score
     //note : it will return a list, in case two or more players have the same highest score
-    public IEnumerable<Player> GetPlayersWithHighestScore()
+    public IEnumerable<GameObject> GetPlayersWithHighestScore()
     {
         if (players.Count() > 0)
         {
-            var topPlayers = new List<Player>();
+            var topPlayers = new List<GameObject>();
 
-            var topPlayer = players.OrderByDescending(p => p.playerScore).First();
+            var topPlayer = players.OrderByDescending(p => p.GetComponent<Player>().playerScore).First();
             topPlayers.Add(topPlayer);
 
             //Check if there are other players with the same score
-            var otherTopPlayers = players.Where(p => p.playerId != topPlayer.playerId && p.playerScore == topPlayer.playerScore);
+            var otherTopPlayers = players.Where(p => p.GetComponent<Player>().playerId != topPlayer.GetComponent<Player>().playerId && p.GetComponent<Player>().playerScore == topPlayer.GetComponent<Player>().playerScore);
 
             if (otherTopPlayers.Count() > 0)
             {

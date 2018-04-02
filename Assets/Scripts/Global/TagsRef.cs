@@ -12,4 +12,5 @@ public static class TagsRef {
     public static string BULLET_TAG = "bullet";
     public static string TRAP_TAG = "trap";
     public static string SAFEZONE_TAG = "safezone";
+    public static string PLANEREF_TAG = "planeReference";
 }

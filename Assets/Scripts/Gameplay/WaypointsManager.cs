@@ -21,8 +21,12 @@ public class WaypointsManager : MonoBehaviour {
         {
             Destroy(gameObject);
         }
+    }
 
-        CreateWaypointsList();
+    public void Start()
+    {
+
+        //CreateWaypointsList();
     }
 
     public void CreateWaypointsList()
