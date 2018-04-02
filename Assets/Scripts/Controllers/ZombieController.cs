@@ -40,7 +40,7 @@ public class ZombieController : MonoBehaviour
         if (collision.collider.tag == BULLET_TAG)
         {
             GetDamage(5);
-            Destroy(collision.collider);
+            Destroy(collision.collider.gameObject);
         }
     }
 
