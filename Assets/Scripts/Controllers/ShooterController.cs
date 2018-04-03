@@ -35,9 +35,13 @@ public class ShooterController : MonoBehaviour
         else
         {
             bullet = bullets.Dequeue();
+            if(bullet == null)
+            {
+                bullet = Instantiate(Resources.Load("Bullet", typeof(GameObject))) as GameObject;
+            }
         }
 
-        bullet.transform.position = transform.position + transform.forward;
+        bullet.transform.position = transform.position + transform.forward + transform.up;
         Rigidbody bulletBody = bullet.GetComponent<Rigidbody>();
         bulletBody.velocity = Vector3.zero;
         bulletBody.AddForce(transform.forward * bulletSpeed);

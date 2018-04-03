@@ -18,6 +18,6 @@ public class TrapActionController : MonoBehaviour
     private void PlaceTrap()
     {
         GameObject trap = Instantiate(Resources.Load("Trap", typeof(GameObject))) as GameObject;
-        trap.transform.position = transform.position - transform.up;
+        trap.transform.position = new Vector3(transform.position.x, 0.1f, transform.position.z);
     }
 }
