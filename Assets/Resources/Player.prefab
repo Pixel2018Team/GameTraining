@@ -2018,7 +2018,7 @@ Animator:
   m_GameObject: {fileID: 1617913961522480}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: b46d352619f23b145b34927e21e3af78, type: 3}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 758daa919bc3b9249bc1832352712097, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
